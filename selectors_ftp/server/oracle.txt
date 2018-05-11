@@ -1,0 +1,54 @@
+alter system set db_file_name_convert='/u01/app/oracle/data/orcls/datafile','/u01/app/oracle/data/orcl/datafile' scope=spfile;
+alter system set log_file_name_convert='/u01/app/oracle/data/orcls/onlinelog','/u01/app/oracle/data/orcl/onlinelog' scope=spfile;
+
+alter system set fal_server='orcls';
+alter system set fal_client='orcl';
+ alter system set standby_file_management='AUTO';
+
+
+ ±¸¿â
+ orcl.__db_cache_size=465567744
+orcl.__java_pool_size=4194304
+orcl.__large_pool_size=4194304
+orcl.__oracle_base='/u01/app/oracle'#ORACLE_BASE set from environment
+orcl.__pga_aggregate_target=167772160
+orcl.__sga_target=671088640
+orcl.__shared_io_pool_size=0
+orcl.__shared_pool_size=184549376
+orcl.__streams_pool_size=0
+*.audit_file_dest='/u01/app/oracle/admin/orcls/adump'
+*.audit_trail='db'
+*.compatible='11.2.0.0.0'
+*.control_files='/u01/app/oracle/data/orcls/controlfile/control03.ctl'
+*.db_block_size=8192
+*.db_domain=''
+*.db_file_name_convert='/u01/app/oracle/data/orcl/datafile','/u01/app/oracle/data/orcls/datafile'
+*.db_name='orcl'
+*.db_recovery_file_dest='/u01/app/oracle/orcls'
+*.db_recovery_file_dest_size=4070572032
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=orclsXDB)'
+*.fal_client='orcls'
+*.fal_server='orcl'
+*.log_archive_config='DG_CONFIG=(orcls,orcl)'
+*.log_archive_dest_1='location=/u01/app/oracle/data/orcls/archivelog'
+*.log_archive_dest_2='SERVICE=orcl VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=orcl'
+*.log_archive_dest_state_1='enable'
+*.log_archive_dest_state_2='enable'
+*.log_file_name_convert='/u01/app/oracle/data/orcl/onlinelog','/u01/app/oracle/data/orcls/onlinelog'
+*.memory_target=800000000
+*.open_cursors=300
+*.pga_aggregate_target=167772160
+*.processes=150
+*.remote_login_passwordfile='EXCLUSIVE'
+*.sga_target=671088640
+*.standby_file_management='AUTO'
+*.undo_tablespace='UNDOTBS1'
+*.db_create_file_dest='/u01/app/oracle/data'
+*.db_unique_name='orcls'
+*.log_archive_format='%t_%s_%r.arc'
+*.sessions=1000
+
+
+
+rman target sys/oracle@orcl auxiliary sys/oracle@orcls
