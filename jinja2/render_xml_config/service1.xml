@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<service1>
+    <server_a_host>192.168.1.151</server_a_host>
+    <server_a_port>8101</server_a_host>
+    <server_c>192.168.1.153:8103</server_c>
+</service1>
