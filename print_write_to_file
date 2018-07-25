@@ -1,0 +1,5 @@
+#注释：将sep前面的字符串以逗号为分隔符存储到文件data.txt中
+with open('data.txt','w') as f:
+    print(1,2,'hello world',sep=",",file=f)
+    
+    
