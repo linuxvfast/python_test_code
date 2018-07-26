@@ -1,0 +1,80 @@
+#Find duplicate files in a directory
+import hashlib
+import sys
+import os
+import fnmatch
+
+CHUNK_SIZE = 8192
+def get_red(filename):
+    '''
+    :param filename:
+    :return:Read the file content 
+    '''
+    with open(filename) as f:
+        # yield f.read()
+        while True:
+            line = f.read(CHUNK_SIZE)
+            if not line:
+                break
+            else:
+                yield line
+
+
+def get_file_md5(filename):
+    '''
+    :param filename:
+    :return: file md5 value
+    '''
+    d = hashlib.md5()
+    for line in get_red(filename):
+        d.update(line.encode())
+    return d.hexdigest()
+
+def is_file_match(filename, patterns):
+    for pattern in patterns:
+        if fnmatch.fnmatch(filename, pattern):
+            return True
+    return False
+
+def find_specific_files(root, patterns=['*'], exclude_dirs=[]):
+    '''
+    :param root: 查找的根目录
+    :param patterns: 需要匹配的文件
+    :param exclude_dirs: 忽略的目录
+    :return:
+    '''
+    for root, dirnames, filenames in os.walk(root):
+        for filename in filenames:
+            if is_file_match(filename, patterns):
+                yield os.path.join(root, filename)
+
+        for d in exclude_dirs:
+            if d in dirnames:
+                dirnames.remove(d)
+
+def main():
+    sys.argv.append("")
+    #get the dirname
+    directory = sys.argv[1]
+    #Determine whether directory, not a directory error exit directly
+    if not os.path.isdir(directory):
+        raise SystemExit("{0} is not a directory".format(directory))
+
+    record = {}
+    #Traverse the file, and add don't repeat to record
+    for item in find_specific_files(directory):
+        check_md5 = get_file_md5(item)
+        if check_md5 in record:
+            print('find duplicate file:{0} vs {1}'.format(record[check_md5],item))
+
+            #remove duplicate file
+            os.remove(item)
+            print('remove duplicate file successful')
+        else:
+            record[check_md5] = item
+    # print('record:',record)
+
+
+
+if __name__ == '__main__':
+    main()
