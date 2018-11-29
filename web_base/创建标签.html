@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <input  type="button" value="添加" onclick="AddTags();"  />
+    <input  type="button" value="添加2" onclick="AddTags2();"  />
+    <div id="i1">
+        <p><input type="text" /></p>
+        <!--<hr />#表示添加一条直线-->
+    </div>
+    <script>
+        function AddTags(){
+            //创建标签
+            var tag = "<p><input type='text' /></p>"
+            //添加标签到i1里
+            document.getElementById('i1').insertAdjacentHTML('beforeEnd',tag);
+        }
+        function AddTags2(){
+            var tag = document.createElement('input');
+            tag.setAttribute('type','text');
+            tag.color = 'red';
+            tag.fontSize = '16px';
+
+            //i1中添加tag标签
+            //document.getElementById('i1').appendChild(tag);
+
+            //创建p标签并添加tag标签到p标签
+            var p = document.createElement('p');
+            p.appendChild(tag);
+
+            document.getElementById('i1').appendChild(p);
+        }
+    </script>
+</body>
+</html>

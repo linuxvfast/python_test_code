@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .hide {
+            display: none;
+        }
+        .item .header{
+            background-color: #2459a2;
+            height: 35px;
+            color: white;
+            line-height: 35px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div style="height:48px"></div>
+    <div style="width:300px">
+        <div class="item">
+            <div id="i1" class="header" onclick="ChangeModel('i1');">后台管理</div>
+            <div class="content hide">
+                <div>内容1</div>
+                <div>内容1</div>
+                <div>内容1</div>
+            </div>
+        </div>
+        <div class="item">
+            <div id="i2" class="header" onclick="ChangeModel('i2');">前台管理</div>
+            <div class="content hide">
+                <div>内容2</div>
+                <div>内容2</div>
+                <div>内容2</div>
+            </div>
+        </div>
+        <div class="item">
+            <div id="i3" class="header" onclick="ChangeModel('i3');">数据管理</div>
+            <div class="content hide">
+                <div>内容3</div>
+                <div>内容3</div>
+                <div>内容3</div>
+            </div>
+        </div>
+        <div class="item">
+            <div id="i4" class="header" onclick="ChangeModel('i4');">内容管理</div>
+            <div class="content hide">
+                <div>内容4</div>
+                <div>内容4</div>
+                <div>内容4</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function ChangeModel(nid){
+            var current_header = document.getElementById(nid);
+            var item_list = current_header.parentElement.parentElement.children;
+
+            for(var i=0;i<item_list.length;i++){
+                var current_item = item_list[i];
+                current_item.children[1].classList.add('hide');
+            }
+            current_header.nextElementSibling.classList.remove('hide');
+        }
+    </script>
+</body>
+</html>
