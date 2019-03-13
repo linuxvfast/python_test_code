@@ -25,5 +25,5 @@ text1_lines = readfile(textfile1)
 print(type(text1_lines))
 text2_lines = readfile(textfile2)
 
-d = difflib.HtmlDiff()
+d = difflib.HtmlDiff() #生成html对比页面
 print(d.make_file(text1_lines,text2_lines))
