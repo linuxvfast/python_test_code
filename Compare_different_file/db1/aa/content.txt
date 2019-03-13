@@ -1,0 +1,14 @@
+HTTP/1.1 301 Moved Permanently
+Server: Varnish
+Retry-After: 0
+Location: https://docs.python.org/3.6/library/smtplib.html
+Content-Length: 0
+Accept-Ranges: bytes
+Date: Tue, 08 May 2018 08:59:51 GMT
+Via: 1.1 varnish
+Connection: close
+X-Served-By: cache-nrt6149-NRT
+X-Cache: HIT
+X-Cache-Hits: 0
+X-Timer: S1525769992.649742,VS0,VE0
+
