@@ -1,0 +1,33 @@
+import xlsxwriter
+workbook = xlsxwriter.Workbook('chart_line.xlsx')
+worksheet = workbook.add_worksheet()
+bold = workbook.add_format({'bold':True})
+headings = ['Number','Batch 1','Batch 2']
+data = [
+[2,3,4,5,6,7],
+[10,40,50,20,10,50],
+[30,60,70,50,40,30],
+]
+worksheet.write_row('A1',headings,bold)
+worksheet.write_column('A2',data[0])
+worksheet.write_column('B2',data[1])
+worksheet.write_column('C2',data[2])
+# worksheet.write(1,2,32)
+chart = workbook.add_chart({'type':'line'}) #类型有area(面积)，bar(条形)，column(柱形)，line(线条)，pie(饼图)，scatter(散点),stock（股票），radar(雷达),之后可以使用insert_chart()函数插入到指定的位置
+# Configure the first series.
+chart.add_series({
+'name': '=Sheet1!$B$1', #获取Batch 1所在位置
+'categories': '=Sheet1!$A$2:$A$7', #获取Batch 1的取值范围
+'values': '=Sheet1!$B$2:$B$7', #对应范围取值
+'line':{'color':'red'}
+})
+# Add a chart title and some axis labels.
+chart.set_title ({'name': 'Results of sample analysis'})
+chart.set_x_axis({'name': 'Test number'})
+chart.set_y_axis({'name': 'Sample length (mm)'})
+# Set an Excel chart style. Colors with white outline and shadow.
+chart.set_style(10) #数字不一样，颜色不断调整
+# Insert the chart into the worksheet (with an offset).
+# worksheet.insert_chart('D2', chart, {'x_offset': 25, 'y_offset': 10}) #最后的字典表示chart在excel中左面和上面是否调整间距
+worksheet.insert_chart('D2', chart)
+workbook.close()
