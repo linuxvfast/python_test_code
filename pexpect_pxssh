@@ -1,0 +1,22 @@
+from pexpect import pxssh
+import getpass
+
+try:
+    sh = pxssh.pxssh()
+    hostname = input('hostname:')
+    username = input('username:')
+    password = getpass.getpass('please input password:')
+    sh.login(hostname,username,password) #登录
+    sh.sendline('uptime') #发送命令
+    sh.prompt() #等待结果
+    print(sh.before)  #获取结果之前的命令输出
+    sh.sendline('ls -l')
+    sh.prompt()
+    print(sh.before)
+    sh.sendline('df -h')
+    sh.prompt()
+    print(sh.before)
+    sh.logout() #断开连接
+except pxssh.ExceptionPxssh as e:
+    print('pxssh faild on login.')
+    print(str(e))
