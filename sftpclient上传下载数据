@@ -1,0 +1,24 @@
+
+#!/usr/bin/env python
+import paramiko
+ 
+user = 'root'
+passwd = '123456'
+ip = '192.168.1.67'（远程主机地址）
+port = 22
+ 
+try:
+    ts = paramiko.Transport((ip,port))
+    ts.connect(username=user,password=passwd)
+    sftp = paramiko.SFTPClient.from_transport(ts)
+ 
+    sftp.put('/root/clamav-0.100.0.tar.gz','/root/clamav-0.100.0.tar.gz')
+    sftp.get('/root/test.tar.gz','/root/test.tar.gz')
+    sftp.mkdir('/root/testdir',755)
+    #sftp.rmdir('/root/testdir')
+    sftp.rename('/root/install.log.bak','/root/test.bak')
+    print(sftp.stat('/root/test.bak'))
+    print(sftp.listdir('/root'))
+    ts.close()
+except Exception as e:
+    print(str(e))
