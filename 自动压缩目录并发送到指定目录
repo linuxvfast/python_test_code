@@ -1,0 +1,33 @@
+import pexpect
+import sys
+
+IP = '192.168.10.67'
+USER = 'root'
+password = "123456"
+target_dir = "/root/test"
+
+
+child = pexpect.spawn('/usr/bin/ssh',[USER+'@'+IP])
+
+try:
+    child.expect('(?i)password') #匹配password
+    child.sendline(password)  #输入密码
+    child.expect('#')
+    child.sendline('tar -zcf /root/test.tar.gz '+target_dir) #压缩目录
+    child.expect('#')
+    print(child.before)
+    child.sendline('exit')
+except EOFError:
+    print('expect eof')
+except TimeoutError:
+    print('timeout')
+
+child = pexpect.spawn('/usr/bin/scp',[USER+'@'+IP+':/root/test.tar.gz','/root'])
+try:
+    child.expect('(?i)password')
+    child.sendline(password)
+    child.expect(pexpect.EOF)  #匹配缓冲区以EOF结尾的，保证传输完成
+except EOFError:
+    print('eof error')
+except TimeoutError:
+    print('timeout error')
