@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+import paramiko
+import os
+user = 'root'
+ip = '192.168.10.67'
+paramiko.util.log_to_file('syslogin.log')
+
+ssh = paramiko.SSHClient()
+ssh.load_system_host_keys()
+privatekey = os.path.expanduser('/root/.ssh/id_rsa') #指定私钥地址
+key = paramiko.RSAKey.from_private_key_file(privatekey)
+
+ssh.connect(hostname=ip,username=user,pkey=key)
+stdin,stdout,stderr = ssh.exec_command('free -m')
+print(stdout.read().decode('utf-8'))
+ssh.close()
