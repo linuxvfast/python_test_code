@@ -1,0 +1,50 @@
+---
+- hosts: dbservers
+  become: yes
+  become_method: sudo
+  vars:
+    mongo_data: /data
+    mongo_port: 27017
+
+  tasks:
+  - name: create the mongo user
+    user: name=mongod comment="mongo user"
+
+  - name: create data directory
+    file: path={{ mongo_data }} owner=mongod group=mongod state=directory
+
+  - name: copy mongo source package
+    copy: src=/root/ansible/mongodb-linux-x86_64-2.6.7.tgz dest=/opt/mongodb-linux-x86_64-2.6.7.tgz
+
+  - name: create store mongodb data
+    file: path={{ mongo_data }}/mongo state=directory owner=mongod group=mongod
+
+  - name: create log directory for mongodb
+    file: path=/var/log/mongo state=directory owner=mongod group=mongod
+
+  - name: Create the mongodb configuration file
+    template: src=/root/ansible/templates/mongod.conf.j2 dest=/etc/mongod.conf
+
+  - name: Start the mongodb service
+    command: /opt/mongodb-linux-x86_64-2.6.7/bin/mongod -f /etc/mongod.conf 
+    
+    
+   用到的模板文件 
+    (project_3) [root@Zabbix server ansible]# cat templates/mongod.conf.j2 
+# mongo.conf
+smallfiles=true
+
+#where to log
+logpath=/var/log/mongo/mongod.log
+
+logappend=true
+
+# fork and run in background
+fork = true
+
+port = {{ mongo_port }}
+
+dbpath={{ mongo_data }}/mongo
+
+# location of pidfile
+pidfilepath=/var/run/mongod.pid
