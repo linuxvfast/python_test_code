@@ -1,0 +1,38 @@
+(project_3) [root@Zabbix server ansible]# cat nginx.conf.j2 
+worker_processes  {{ worker_processes }};
+worker_rlimit_nofile {{ max_open_files }};
+
+events {
+    worker_connections {{ worker_connections }};
+    }
+
+
+http {
+    server {
+        listen 80 default_server;
+        listen 443 ssl;
+        
+        root /usr/local/nginx/html;
+        index index.html index.htm;
+        
+        server_name localhost;
+        
+        location / {
+            try_files $uri $uri/ =404;
+        }
+    }
+}
+
+
+(project_3) [root@Zabbix server ansible]# cat index.html.j2 
+<html>
+  <head>
+    <title>Welcome to ansible</title>
+  </head>
+  <body>
+    <h1>nginx, configured by Ansible</h1>
+    <p>If you can see this, Ansible successfully installed nginx.</p>
+
+    <p>{{ ansible_hostname }}</p>
+  </body>
+</html>
