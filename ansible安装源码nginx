@@ -1,0 +1,44 @@
+---
+- hosts: webservers
+  become: yes
+  become_method: sudo
+  vars:
+    worker_processes: 4
+    worker_connections: 768
+    max_open_files: 65535
+  tasks:
+  - name: install rely
+    yum: name={{ item }} state=present
+    with_items:
+      - gcc-*
+      - pcre 
+      - pcre-devel 
+      - zlib 
+      - zlib-devel 
+      - openssl
+      - openssl-devel
+
+  - name: copy source package
+    copy: src=/root/ansible/nginx-1.10.3.tar.gz dest=/opt/nginx-1.10.3.tar.gz
+
+  - name: copy start shell
+    copy: src=/root/ansible/nginxd  dest=/etc/init.d/nginx mode=755
+
+  - name: unprocess install package
+    unarchive: src=/opt/nginx-1.10.3.tar.gz  dest=/opt/ remote_src=yes
+
+  - name: install nginx
+    shell: cd /opt/nginx-1.10.3;./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-pcre;make;make install
+    register: ningx_res
+
+  - name: copy nginx config file
+    template: src=/root/ansible/nginx.conf.j2 dest=/usr/local/nginx/conf/nginx.conf backup=yes
+
+  - name: copy index.html
+    template: src=/root/ansible/index.html.j2 dest=/usr/local/nginx/html/index.html backup=yes mode=644
+    notify:
+      - restart nginx
+
+  handlers:
+  - name: restart nginx
+    service: name=nginx state=started
