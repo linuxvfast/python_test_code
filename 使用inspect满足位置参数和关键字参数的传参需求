@@ -1,0 +1,31 @@
+import functools
+import inspect
+
+
+def check_is_admin(func):
+    @functools.wraps(func)
+    def wrapper(*args,**kwargs):
+        func_args = inspect.getcallargs(func,*args,**kwargs)
+        #inspect.getcallargs获取传进来的所有参数，组成字典返回，避免位置参数和关键字参数不能正确处理参数的问题
+        if func_args.get('username') != 'admin':
+            raise Exception("this user is not allowed to put/get elem")
+        return func(*args,**kwargs)
+    return wrapper
+
+class Stack:
+    def __init__(self):
+        self.storage = []
+
+    @check_is_admin
+    def put(self,username,elem):
+        self.storage.append(elem)
+
+    @check_is_admin
+    def get(self,username):
+        if not self.storage:
+            raise Exception("there is no elem in stack")
+        return self.storage.pop()
+
+t = Stack()
+t.put(username='admin',elem=1)  #关键字参数默认会传给**kwargs
+t.put('admin',elem=2)  #传入位置参数，如果装饰器函数不使用inspect，只能使用位置参数或者关键字参数一种方式的传参
