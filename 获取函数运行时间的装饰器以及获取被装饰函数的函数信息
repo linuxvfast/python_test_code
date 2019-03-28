@@ -1,0 +1,30 @@
+import time
+import functools
+
+
+def benchmark(func):
+    '''Statistical function running time'''
+    @functools.wraps(func)
+    #Don't add this line can't to obtain(获取) be modified(修改的) function of the function name and help information
+    def wrapper(*args,**kwargs):
+        t = time.time()
+        res = func(*args,**kwargs)
+        print(func.__name__,time.time() - t)
+        return res
+    return wrapper
+
+@benchmark
+def add(a,b):
+    '''get add date info'''
+    time.sleep(1)
+    return a + b
+
+def mul(a,b):
+    '''test decorator get the info'''
+    return  a * b
+
+print(mul.__name__)  #get function name
+print(mul.__doc__)   #get function help infomation
+
+print(add.__name__)
+print(add.__doc__)
