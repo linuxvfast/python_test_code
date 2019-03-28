@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+import codecs  #Python标准模块
+
+
+class Open(object):
+
+    def __init__(self,filename,mode,encoding="utf-8"): #指定默认的字符集
+        self.fp = codecs.open(filename,mode,encoding)
+
+    def __enter__(self): #实现python3中的上下文管理器的方法__enter__
+        return self.fp
+
+    def __exit__(self,exc_type,exc_val,exc_tb): #使用Python3中的上下文管理器的方法__exit__
+        self.fp.close()
+
+data = u'上下文管理器\n'
+with Open('data.txt','w') as f:
+    f.write(data)
