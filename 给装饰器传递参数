@@ -1,0 +1,13 @@
+def times(length=1): #接收装饰器自己的参数
+    def bread(func): #参数是被装饰函数的函数
+        def wrapper(*args,**kwargs): #参数是被装饰函数的参数
+            for i in range(length):
+                func(*args,**kwargs)
+        return wrapper
+    return bread
+
+@times(5)
+def sandwich(name):
+    print(name)
+
+sandwich('this is a test')
