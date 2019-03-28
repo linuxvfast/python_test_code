@@ -1,0 +1,10 @@
+import decimal
+
+
+print(decimal.Decimal('1.00') / decimal.Decimal('3.00'))
+
+#临时修改小数的精度
+with decimal.localcontext() as f:
+    f.prec = 5   #保留指定长度的小数
+    x = decimal.Decimal('1.00') / decimal.Decimal('3.00')
+    print(x)
