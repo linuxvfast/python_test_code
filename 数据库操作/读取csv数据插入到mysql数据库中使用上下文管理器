@@ -1,0 +1,51 @@
+import csv
+from collections import namedtuple  #使用命令元组可以使用列名访问元组中的内容
+from contextlib import contextmanager
+import pymysql
+
+@contextmanager
+def get_conn(**kwargs):
+    '''Return to connect the mysql database connection object'''
+    conn = pymysql.connect(host = kwargs.get('host','localhost'),
+                           user = kwargs.get('user'),
+                           password = kwargs.get('password'),
+                           port = kwargs.get('port',3306),
+                           db = kwargs.get('db'))
+    try:
+        yield conn
+    finally:
+        if conn:
+            conn.close()
+
+def execute_sql(conn,sql):
+    '''exec create table the sql'''
+    with conn as cur:
+        cur.execute(sql)
+
+def get_data(file_name):
+    with open(file_name) as f:
+        f_csv = csv.reader(f)
+        # print('f_csv',f_csv)
+        header = next(f_csv)
+        # print('header',header)
+        row = namedtuple('Row',header)
+        for r in f_csv:
+            yield row(*r)
+
+def insert_data(conn,id ,name,age):
+    insert_format = "insert into student values({0},'{1}',{2})"
+    #name需要用单引号括起来，否则下面传参时会报pymysql.err.InternalError: (1054, "Unknown column 'zhang' in 'field list'")
+    sql = insert_format.format(id,name,age)
+    execute_sql(conn,sql)
+
+def main():
+    conn_args = dict(host='192.168.10.22',user='foouser',password='abc',port=3306,db='foodb')
+    with get_conn(**conn_args) as conn:
+        for info in get_data('test.csv'):
+            insert_data(conn,info.id,info.name,info.age)
+
+
+
+
+if __name__ == '__main__':
+    main()
