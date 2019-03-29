@@ -1,3 +1,4 @@
+方法一：
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 import codecs  #Python标准模块
@@ -17,3 +18,26 @@ class Open(object):
 data = u'上下文管理器\n'
 with Open('data.txt','w') as f:
     f.write(data)
+
+    
+    
+    
+    方法二：
+import codecs
+from contextlib import contextmanager   #contextlib能够简化实现上下文管理器的逻辑
+
+
+@contextmanager  #通过contextmanager修饰之后不用实现__enter__和__exit__方法，直接变成上下文管理器
+def Open(filename,mode,encoding='utf-8'):
+    fp = codecs.open(filename,mode,encoding)
+    try:
+        yield fp
+    finally:
+        fp.close()
+
+data = u'上下文管理器\n'
+with Open('data.txt','w') as f:
+    f.write(data)
+
+yeild表达式所在的地方，就是with语句块的地方 
+with语句块抛出的任何异常才会由yield表达式重新抛出
