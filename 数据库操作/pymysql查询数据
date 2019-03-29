@@ -1,0 +1,30 @@
+try:
+    import pymysql as db
+except ImportError:
+    import sqlite3 as db
+    
+
+def get_conn(**kwargs):
+    try:
+        return db.connect(host = kwargs.get('host','localhost'),
+                          user = kwargs.get('user'),
+                          passwd = kwargs.get('passwd'),
+                          port = kwargs.get('port',3306),
+                          db = kwargs.get('db'))
+    except:
+        return db.connect(database=kwargs.get('db'))
+
+def main():
+    conn = get_conn(host='192.168.10.22',user='foouser',passwd='123456',port=3306,db='foodb')
+    cur = conn.cursor()
+    cur.execute('select * from student')
+    rows = cur.fetchall()
+    for row in rows:
+        print(row)
+        
+    cur.close()
+    conn.close()
+
+
+if __name__ == '__main__':
+    main()
