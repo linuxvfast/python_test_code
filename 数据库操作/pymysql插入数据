@@ -1,0 +1,51 @@
+import pymysql
+
+
+def get_conn(**kwargs):
+    '''Return to connect the mysql database connection object'''
+    return pymysql.connect(host = kwargs.get('host','localhost'),
+                           user = kwargs.get('user'),
+                           password = kwargs.get('password'),
+                           port = kwargs.get('port',3306),
+                           db = kwargs.get('db'))
+
+def execute_sql(conn,sql):
+    '''exec create table the sql'''
+    with conn as cur:
+        cur.execute(sql)
+
+def create_table(conn):
+    '''create table student'''
+    sql_drop_table = 'Drop table if exists student'
+    sql_create_table = '''create table student(id int(11) not null,
+                                                name varchar(20) default null,
+                                                age int(11) default null,
+                                                primary key(id))engine=Innodb default charset=utf8'''
+    for sql in [sql_drop_table,sql_create_table]:
+        execute_sql(conn,sql)
+
+def insert_data(conn,id ,name,age):
+    insert_format = "insert into student values({0},'{1}',{2})" 
+    #name需要用单引号括起来，否则下面传参时会报pymysql.err.InternalError: (1054, "Unknown column 'zhang' in 'field list'")
+    sql = insert_format.format(id,name,age)
+    execute_sql(conn,sql)
+
+def main():
+    conn = get_conn(host='192.168.10.22',user='foouser',password='abc',port=3306,db='foodb')
+    try:
+        create_table(conn)
+        insert_data(conn,1,'zhang',20)
+        insert_data(conn,2,'jia',30)
+
+        with conn as cur:
+            cur.execute('select * from student')
+            rows = cur.fetchall()
+            for row in rows:
+                print(row)
+        
+    finally:
+        if conn:
+            conn.close()
+
+if __name__ == '__main__':
+    main()
