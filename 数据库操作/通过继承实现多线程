@@ -1,0 +1,20 @@
+import threading
+
+
+class Mythread(threading.Thread):
+    def __init__(self,user):
+        super(Mythread,self).__init__()
+        self.user = user
+
+    def run(self):
+        for info in self.user:
+            print('hello',info)
+
+
+def main():
+    user_list = ['Job','Tom','Jack','Lin','Ling']
+    thread = Mythread(user_list)
+    thread.start()
+
+if __name__ == '__main__':
+    main()
