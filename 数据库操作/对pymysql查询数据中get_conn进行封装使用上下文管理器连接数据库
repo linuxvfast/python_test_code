@@ -1,0 +1,34 @@
+from contextlib import contextmanager
+try:
+    import pymysql as db
+except ImportError:
+    import sqlite3 as db
+
+@contextmanager
+def get_conn(**kwargs):
+    conn = db.connect(host = kwargs.get('host','localhost'),
+                          user = kwargs.get('user'),
+                          passwd = kwargs.get('passwd'),
+                          port = kwargs.get('port',3306),
+                          db = kwargs.get('db'))
+    try:
+        yield conn
+    finally:
+        if conn:
+            conn.close()
+
+
+
+def main():
+    conn_args = dict(host='192.168.10.22',user='foouser',passwd='abc',port=3306,db='foodb')
+    with get_conn(**conn_args) as conn:
+        with conn as cur:
+            cur.execute('select * from student')
+            rows = cur.fetchall()
+            for row in rows:
+                print(row)
+
+
+
+if __name__ == '__main__':
+    main()
