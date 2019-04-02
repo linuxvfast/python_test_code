@@ -1,0 +1,15 @@
+import pika
+
+credentals = pika.PlainCredentials('rabbit','rabbit')  #远程连接rabbitmq需要添加用户并通过验证登录
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel() #声明管道
+channel.queue_declare(queue='hello') #声明队列
+channel.basic_publish(exchange='',  #rabbitmq消息是无法直接发送到队列中的，需要转换一下发送到队列
+                      routing_key='hello',
+                      body='hello world')
+print("[x] set 'hello world!'")
+conn.close()
+
+
+添加用户参考
+https://www.cnblogs.com/lykbk/p/erewererewr32434343.html
