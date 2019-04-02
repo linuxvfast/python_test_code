@@ -1,0 +1,18 @@
+import pika
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel()
+channel.queue_declare(queue='hello',durable=True) #不确定生产者是否先启动时需要声明队列，如果确定生产者先启动可以省略
+def callback(ch,method,properties,body):
+    print('-->',ch,method,properties)
+    print("[x] received %r"% body)
+    # ch.basic_ack(delivery_tag=method.delivery_tag) #实现完自动删除，与auto_ack作用相同
+channel.basic_consume(on_message_callback=callback,
+                      queue='hello',
+                      auto_ack=True) #不加参数auto_ack，如果消费者接受信息过程中断点，会把消息轮询发送给其它的消费者，不会删除信息
+print('[*] waiting for message.to exit press ctrl+c')
+channel.start_consuming()
+
+
+如果生产者队列和消息做了持久化，消费者相同的队列也需要做持久化，才能正常收发消费
