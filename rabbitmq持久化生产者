@@ -1,0 +1,15 @@
+import pika
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel() #声明管道
+channel.queue_declare(queue='hello',durable=True) #声明队列，durable持久化队列
+channel.basic_publish(exchange='',
+                      routing_key='hello',
+                      body='hello world',
+                      properties=pika.BasicProperties(delivery_mode=2)) #keep the messages persistent（持久化）
+print("[x] send 'hello world!'")
+conn.close()
+
+
+队列和消息需要同时进行持久化
