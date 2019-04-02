@@ -1,0 +1,20 @@
+import pika
+import time
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel()
+channel.queue_declare(queue='hello',durable=True) #不确定生产者是否先启动时需要声明队列，如果确定生产者先启动可以省略
+def callback(ch,method,properties,body):
+    time.sleep(30)
+    print('-->',ch,method,properties)
+    print("[x] received %r"% body)
+    # ch.basic_ack(delivery_tag=method.delivery_tag)
+channel.basic_qos(prefetch_count=1) #表示当接收到一条消息之后，没有处理完之前不接收下一条消息
+channel.basic_consume(on_message_callback=callback,
+                      queue='hello',
+                      auto_ack=True) #不加参数auto_ack，如果消费者接受信息过程中断点，会把消息轮询发送给其它的消费者，不会删除信息
+print('[*] waiting for message.to exit press ctrl+c')
+channel.start_consuming()
+
+使用sleep模仿信息处理的时间长
