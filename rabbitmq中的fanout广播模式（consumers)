@@ -1,0 +1,17 @@
+import pika
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel()
+channel.exchange_declare(exchange='logs',exchange_type='fanout')
+result = channel.queue_declare('',exclusive=True) #消费者与队列的连接断开之后，自动删除队列，在python3中需要指定空的对列名
+queue_name = result.method.queue  #获取随机队列名
+channel.queue_bind(exchange='logs',queue=queue_name) #将队列绑定到exchange
+def callback(ch,method,properties,body):
+    print("[x] received %r"% body)
+
+channel.basic_consume(on_message_callback=callback,
+                      queue=queue_name,
+                      auto_ack=True) #不加参数auto_ack，如果消费者接受信息过程中断点，会把消息轮询发送给其它的消费者，不会删除信息
+print('[*] waiting for message.to exit press ctrl+c')
+channel.start_consuming()
