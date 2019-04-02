@@ -9,6 +9,6 @@ def callback(ch,method,properties,body):
 
 channel.basic_consume(on_message_callback=callback,
                       queue='hello',
-                      auto_ack=True)
+                      auto_ack=True)#不加参数auto_ack，如果消费者接受信息过程中断点，会把消息轮询发送给其它的消费者，不会删除信息
 print('[*] waiting for message.to exit press ctrl+c')
 channel.start_consuming()
