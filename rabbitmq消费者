@@ -1,0 +1,14 @@
+import pika
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel()
+channel.queue_declare(queue='hello') #不确定生产者是否先启动时需要声明队列，如果确定生产者先启动可以省略
+def callback(ch,method,properties,body):
+    print("[x] received %r"% body)
+
+channel.basic_consume(on_message_callback=callback,
+                      queue='hello',
+                      auto_ack=True)
+print('[*] waiting for message.to exit press ctrl+c')
+channel.start_consuming()
