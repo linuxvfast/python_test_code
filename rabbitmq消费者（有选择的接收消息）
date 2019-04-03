@@ -1,0 +1,32 @@
+import sys
+import pika
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel()
+channel.exchange_declare(exchange='direct_logs',exchange_type='direct')
+result = channel.queue_declare('',exclusive=True) #消费者与队列的连接断开之后，自动删除队列
+queue_name = result.method.queue  #获取随机队列名
+
+severities = sys.argv[1:] #获取执行时输入的参数
+if not severities:
+    sys.stderr.write("Usage:%s [info] [warning] [error]\n"% sys.argv[0])
+    sys.exit(1)
+
+for severity in severities:
+    channel.queue_bind(exchange='direct_logs',#将队列绑定到exchange
+                       queue=queue_name,
+                       routing_key=severity)
+
+def callback(ch,method,properties,body):
+    print("[x] received %r:%r"% (method.routing_key,body))
+
+channel.basic_consume(on_message_callback=callback,
+                      queue=queue_name,
+                      auto_ack=True) #不加参数auto_ack，如果消费者接受信息过程中断点，会把消息轮询发送给其它的消费者，不会删除信息
+print('[*] waiting for message.to exit press ctrl+c')
+channel.start_consuming()
+
+执行时需要传入参数，不传参数无法运行
+#python filename.py  info(表示只接收info信息)
+#python filename.py  info warning（表示可以接收info和warning信息）
