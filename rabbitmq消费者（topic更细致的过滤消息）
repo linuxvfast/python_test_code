@@ -1,0 +1,43 @@
+import sys
+import pika
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel()
+channel.exchange_declare(exchange='topic_logs',exchange_type='topic')  #指定exchange的类型为topic
+result = channel.queue_declare('',exclusive=True) #消费者与队列的连接断开之后，自动删除队列
+queue_name = result.method.queue  #获取随机队列名
+
+binding_keys = sys.argv[1:]
+if not binding_keys:
+    sys.stderr.write("Usage:%s [binding_key]\n"% sys.argv[0])
+    sys.exit(1)
+
+for binding_key in binding_keys:
+    channel.queue_bind(exchange='topic_logs',#将队列绑定到exchange
+                       queue=queue_name,
+                       routing_key=binding_key)
+
+def callback(ch,method,properties,body):
+    print("[x] received %r:%r"% (method.routing_key,body))
+
+channel.basic_consume(on_message_callback=callback,
+                      queue=queue_name,
+                      auto_ack=True) #不加参数auto_ack，如果消费者接受信息过程中断点，会把消息轮询发送给其它的消费者，不会删除信息
+print('[*] waiting for message.to exit press ctrl+c')
+channel.start_consuming()
+
+==================================================================
+topic:所有符合routingKey(此时可以是一个表达式)的routingKey所bind的queue可以接收消息
+
+　　 表达式符号说明：#代表一个或多个字符，*代表任何字符
+      例：#.a会匹配a.a，aa.a，aaa.a等
+          *.a会匹配a.a，b.a，c.a等
+     注：使用RoutingKey为#，Exchange Type为topic的时候相当于使用fanout
+     
+     
+============
+运行参数可以参数上面的参数
+#python file_name.py  #
+#python file_name.py  "*.aa" "b.*"
+#python file_name.py  #.b
