@@ -1,0 +1,20 @@
+import sys
+import pika
+
+
+credentals = pika.PlainCredentials('rabbit','rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters('localhost',5672,'/',credentals))
+channel = conn.channel() #声明管道
+channel.exchange_declare(exchange='direct_logs',exchange_type='direct') #绑定exchange，指定类型是direct广播模式
+severity = sys.argv[1] if len(sys.argv) > 1 else 'info'
+message = ''.join(sys.argv[1:]) or 'info:hello world2'
+channel.basic_publish(exchange='direct_logs',
+                      routing_key=severity, 
+                      body=message)
+print("[x] send 'hello world!'")
+conn.close()
+
+
+exchange和routing_key决定接收什么样的信息
+生产者如果直接运行不加参数，默认会发发送message中定义的info:hello world2信息
+如果生产者加参数运行，需要看消费者接收什么样的消息，如果消费者指定接收info的信息，其它的信息是不会接收的
