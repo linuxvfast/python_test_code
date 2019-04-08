@@ -1,0 +1,23 @@
+import pymysql
+
+#连接数据库
+conn = pymysql.connect(host='192.168.10.22',port=3306,user='root',passwd='123456',db='code')
+
+#创建光标
+cursor = conn.cursor()
+
+#插入数据并返回影响的行数
+res_row = cursor.execute("insert into test(id,name) values(%s,%s)",(5,'hes'))
+# res_row = cursor.execute("insert into test(id,name) values(%s,%s)",(2,'linda'))
+# print(res_row)
+
+#提交
+conn.commit()
+
+#关闭光标和连接
+cursor.close()
+conn.close()
+
+#获取最新的自动ID
+new_id = cursor.lastrowid
+print(new_id)
