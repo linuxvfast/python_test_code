@@ -1,0 +1,16 @@
+import pymysql
+
+
+conn = pymysql.connect(host='192.168.10.22',port=3306,user='root',passwd='123456',db='code')
+cursor = conn.cursor()
+cursor.execute('select * from test')
+
+# row_1 = cursor.fetchone() #获取第一条数据
+# row_n = cursor.fetchmany(3) #获取前3条数据
+row_all = cursor.fetchall() #获取所有的数据
+# print(row_1)
+# print(row_n)
+print(row_all)
+
+cursor.close()
+conn.close()
